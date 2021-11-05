@@ -49,6 +49,7 @@ const FinishTime = () => {
           },
         }
       );
+      console.log(response);
     }
 
     sendFinishTimeAndRaceNr(finishedRacer);
