@@ -1,17 +1,27 @@
 import React, { useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { uiActions } from "./store/ui-slice";
+
 import { Box, BottomNavigation, BottomNavigationAction } from "@mui/material";
+
 import ContactsIcon from "@mui/icons-material/Contacts";
 import ConstructionIcon from "@mui/icons-material/Construction";
 import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
+
 import FinishTime from "./Components/FinishTime/FinishTime";
 
 function App() {
-  const [value, setValue] = React.useState(0);
-
-  const [showFinishTimeComponent, setShowFinishTimeComponent] = useState(false);
+  const dispatch = useDispatch();
+  const showFinishTime = useSelector(
+    (state) => state.ui.showFinishTimeComponent
+  );
   const showFinRacerHandler = () => {
-    setShowFinishTimeComponent(!showFinishTimeComponent);
+    dispatch(uiActions.toggle());
   };
+
+  const [value, setValue] = React.useState(0);
 
   return (
     <section>
@@ -24,7 +34,7 @@ function App() {
           padding: "1rem",
         }}
       >
-        {showFinishTimeComponent && <FinishTime />}
+        {showFinishTime && <FinishTime />}
       </Box>
       <BottomNavigation
         showLabels
