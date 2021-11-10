@@ -2,10 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const uiSlice = createSlice({
   name: "ui",
-  initialState: { showFinishTimeComponent: false },
+  initialState: {
+    showFinishTimeComponent: true,
+    showAddRacerComponent: false,
+  },
   reducers: {
-    toggle(state) {
-      state.showFinishTimeComponent = !state.showFinishTimeComponent;
+    showFinish(state) {
+      state.showFinishTimeComponent = true;
+      state.showAddRacerComponent = false;
+    },
+    showAddRacer(state) {
+      state.showAddRacerComponent = true;
+      state.showFinishTimeComponent = false;
     },
   },
 });

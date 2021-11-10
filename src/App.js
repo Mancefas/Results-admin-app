@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -11,14 +11,21 @@ import ConstructionIcon from "@mui/icons-material/Construction";
 import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
 
 import FinishTime from "./Components/FinishTime/FinishTime";
+import AddRacer from "./Components/AddRacer/AddRacer";
 
 function App() {
   const dispatch = useDispatch();
+
   const showFinishTime = useSelector(
     (state) => state.ui.showFinishTimeComponent
   );
   const showFinRacerHandler = () => {
-    dispatch(uiActions.toggle());
+    dispatch(uiActions.showFinish());
+  };
+
+  const showAddRacer = useSelector((state) => state.ui.showAddRacerComponent);
+  const showAddRacerHandler = () => {
+    dispatch(uiActions.showAddRacer());
   };
 
   const [value, setValue] = React.useState(0);
@@ -35,6 +42,7 @@ function App() {
         }}
       >
         {showFinishTime && <FinishTime />}
+        {showAddRacer && <AddRacer />}
       </Box>
       <BottomNavigation
         showLabels
@@ -52,6 +60,7 @@ function App() {
           label="Suvesti
            dalyvį"
           icon={<ContactsIcon />}
+          onClick={showAddRacerHandler}
         />
         <BottomNavigationAction
           label="Taisyti dalyvio laiką "
