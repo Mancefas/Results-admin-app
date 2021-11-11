@@ -4,7 +4,6 @@ import CheckIcon from "@mui/icons-material/Check";
 
 const FinishTime = () => {
   const inputRef = useRef();
-  const [valueFromInput, setValueFromInput] = useState();
   const [sentOK, setSentOK] = useState();
   const [countFinished, setCountFinished] = useState(0);
 
@@ -18,10 +17,8 @@ const FinishTime = () => {
   const raceStart = new Date("2021-10-17T11:00:00");
 
   const inputHandler = () => {
-    setValueFromInput(inputRef.current.value);
-    inputRef.current.value = "";
     setCountFinished((count) => count + 1);
-    const raceNumber = valueFromInput;
+    const raceNumber = inputRef.current.value;
     const currentTime = new Date();
 
     const finishedRacer = {
@@ -64,6 +61,7 @@ const FinishTime = () => {
     }
 
     sendFinishTimeAndRaceNr(finishedRacer);
+    inputRef.current.value = "";
   };
 
   return (

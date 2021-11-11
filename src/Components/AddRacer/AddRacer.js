@@ -9,7 +9,6 @@ const AddRacer = () => {
 
   const formSubmitHanlder = (e) => {
     e.preventDefault();
-    console.log(e);
 
     const dviratis = e.target.dviratis.value;
     const grupe = e.target.grupe.value;
@@ -42,6 +41,7 @@ const AddRacer = () => {
           },
         }
       );
+      //Console.log respone just to not have unused value
       console.log(response);
     }
 
