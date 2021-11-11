@@ -12,6 +12,7 @@ import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
 
 import FinishTime from "./Components/FinishTime/FinishTime";
 import AddRacer from "./Components/AddRacer/AddRacer";
+import ChangesToRacer from "./Components/ChangesToRacer/ChangesToRacer";
 
 function App() {
   const dispatch = useDispatch();
@@ -26,6 +27,13 @@ function App() {
   const showAddRacer = useSelector((state) => state.ui.showAddRacerComponent);
   const showAddRacerHandler = () => {
     dispatch(uiActions.showAddRacer());
+  };
+
+  const showChangesToRacer = useSelector(
+    (state) => state.ui.showChangesToRacerComponent
+  );
+  const showChangesToRacerHandler = () => {
+    dispatch(uiActions.showChangesToRacer());
   };
 
   const [value, setValue] = React.useState(0);
@@ -43,6 +51,7 @@ function App() {
       >
         {showFinishTime && <FinishTime />}
         {showAddRacer && <AddRacer />}
+        {showChangesToRacer && <ChangesToRacer />}
       </Box>
       <BottomNavigation
         showLabels
@@ -65,6 +74,7 @@ function App() {
         <BottomNavigationAction
           label="Taisyti dalyvio laiką "
           icon={<ConstructionIcon />}
+          onClick={showChangesToRacerHandler}
         />
       </BottomNavigation>
     </section>
