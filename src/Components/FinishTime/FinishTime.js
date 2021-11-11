@@ -10,7 +10,7 @@ const FinishTime = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setSentOK(false);
-    }, 100);
+    }, 300);
     return () => clearTimeout(timer);
   }, [sentOK]);
 
