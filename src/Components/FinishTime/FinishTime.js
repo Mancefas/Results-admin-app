@@ -2,8 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { TextField, Container, Button, Box, Avatar } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 
+let initialLoad = true;
+
 const FinishTime = () => {
   const inputRef = useRef();
+  const [racer, setRacer] = useState();
   const [sentOK, setSentOK] = useState();
   const [countFinished, setCountFinished] = useState(0);
 
@@ -46,12 +49,22 @@ const FinishTime = () => {
         .padStart(2, 0)}`,
     };
 
-    async function sendFinishTimeAndRaceNr(rider) {
+    setRacer(finishedRacer);
+    inputRef.current.value = "";
+  };
+
+  useEffect(() => {
+    if (initialLoad) {
+      initialLoad = false;
+      return;
+    }
+
+    async function sendFinishTimeAndRaceNr(racer) {
       const response = await fetch(
         "https://gif-rezultatai-b73a6-default-rtdb.europe-west1.firebasedatabase.app/rez.json",
         {
           method: "POST",
-          body: JSON.stringify(rider),
+          body: JSON.stringify(racer),
           headers: {
             "Content-Type": "application/json",
           },
@@ -59,10 +72,8 @@ const FinishTime = () => {
       );
       setSentOK(response.ok);
     }
-
-    sendFinishTimeAndRaceNr(finishedRacer);
-    inputRef.current.value = "";
-  };
+    sendFinishTimeAndRaceNr(racer);
+  }, [racer]);
 
   return (
     <Container
