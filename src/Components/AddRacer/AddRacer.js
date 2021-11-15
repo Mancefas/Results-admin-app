@@ -41,8 +41,9 @@ const AddRacer = () => {
           },
         }
       );
-      //Console.log respone just to not have unused value
-      console.log(response);
+      if (!response.ok) {
+        throw new Error("Could not send data!");
+      }
     }
 
     if (initialLoad) {
