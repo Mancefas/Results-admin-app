@@ -87,8 +87,9 @@ const FinishTime = () => {
             "Content-Type": "application/json",
           },
         });
-        setSentOK(response.ok);
-        if (!response.ok) {
+        if (response.ok) {
+          setSentOK(true);
+        } else {
           setNotSent(true);
           setApiError("Klaida siunčiant! ");
         }

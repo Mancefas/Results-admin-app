@@ -43,26 +43,19 @@ const AddRacer = () => {
             "Content-Type": "application/json",
           },
         });
-
-        //Should handle error message ...!!!
-        if (!response.ok) {
-          setSentToDB(false);
+        if (response.ok) {
+          setSentToDB(true);
+          setTimeout(() => {
+            setSentToDB(false);
+          }, 3000);
+        } else {
           setFailedToSendToDB("Nepavyko užregistruoti dalyvio!");
         }
-      }
-
-      if (!racer) {
-        return;
       }
       sendNewRacer(racer);
     } catch (error) {
       setFailedToSendToDB(error);
     }
-
-    setSentToDB(true);
-    setTimeout(() => {
-      setSentToDB(false);
-    }, 3000);
   }, [racer]);
 
   return (
