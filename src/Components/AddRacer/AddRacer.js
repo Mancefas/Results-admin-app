@@ -46,6 +46,8 @@ const AddRacer = () => {
 
         //Should handle error message ...!!!
         if (!response.ok) {
+          setFailedToSendToDB(true);
+          setSentToDB(false);
           throw new Error("Could not send data!");
         }
       }
@@ -62,7 +64,7 @@ const AddRacer = () => {
         setSentToDB(false);
       }, 3000);
     } catch (error) {
-      setFailedToSendToDB(true);
+      console.log(error);
     }
   }, [racer]);
 
@@ -75,7 +77,7 @@ const AddRacer = () => {
       }}
     >
       {failedToSendToDB && (
-        <Alert severity="success">Nepavyko užregistruoti dalyvio !</Alert>
+        <Alert severity="error">Nepavyko užregistruoti dalyvio !</Alert>
       )}
       {sentToDB && <Alert severity="success">Dalyvis užregistruotas!</Alert>}
       <Box sx={{ height: "fit-content" }}>
