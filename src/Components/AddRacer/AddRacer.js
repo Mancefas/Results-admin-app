@@ -3,11 +3,9 @@ import React, { useState, useEffect, useRef } from "react";
 
 import config from "../../config.json";
 
-let initialLoad = true;
-
 const AddRacer = () => {
   const inputRef = useRef();
-  const [racer, setRacer] = useState();
+  const [racer, setRacer] = useState(undefined);
   const [sentToDB, setSentToDB] = useState(false);
   const [failedToSendToDB, setFailedToSendToDB] = useState(false);
 
@@ -32,10 +30,12 @@ const AddRacer = () => {
     e.target[8].value = "";
     e.target[10].value = "";
   };
-
   useEffect(() => {
     try {
       async function sendNewRacer(racer) {
+        if (!racer) {
+          return;
+        }
         const response = await fetch(config.API_URL_RACERS, {
           method: "POST",
           body: JSON.stringify(racer),
@@ -46,26 +46,26 @@ const AddRacer = () => {
 
         //Should handle error message ...!!!
         if (!response.ok) {
-          setFailedToSendToDB(true);
           setSentToDB(false);
-          throw new Error("Could not send data!");
+          setFailedToSendToDB("Nepavyko užregistruoti dalyvio!");
+          setTimeout(() => {
+            setFailedToSendToDB(false);
+          }, 3000);
         }
       }
 
-      if (initialLoad) {
-        initialLoad = false;
+      if (!racer) {
         return;
       }
-
       sendNewRacer(racer);
-
-      setSentToDB(true);
-      setTimeout(() => {
-        setSentToDB(false);
-      }, 3000);
     } catch (error) {
-      console.log(error);
+      setFailedToSendToDB(error);
     }
+
+    setSentToDB(true);
+    setTimeout(() => {
+      setSentToDB(false);
+    }, 3000);
   }, [racer]);
 
   return (
@@ -76,9 +76,7 @@ const AddRacer = () => {
         height: "fit-content",
       }}
     >
-      {failedToSendToDB && (
-        <Alert severity="error">Nepavyko užregistruoti dalyvio !</Alert>
-      )}
+      {failedToSendToDB && <Alert severity="error">{failedToSendToDB}</Alert>}
       {sentToDB && <Alert severity="success">Dalyvis užregistruotas!</Alert>}
       <Box sx={{ height: "fit-content" }}>
         <form onSubmit={formSubmitHanlder}>
