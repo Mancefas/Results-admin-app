@@ -1,6 +1,8 @@
 import { Container, TextField, Box, Button } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
 
+import config from "../../config.json";
+
 let initialLoad = true;
 
 const AddRacer = () => {
@@ -31,16 +33,15 @@ const AddRacer = () => {
 
   useEffect(() => {
     async function sendNewRacer(racer) {
-      const response = await fetch(
-        "https://gif-rezultatai-b73a6-default-rtdb.europe-west1.firebasedatabase.app/dal.json",
-        {
-          method: "POST",
-          body: JSON.stringify(racer),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(config.API_URL_RACERS, {
+        method: "POST",
+        body: JSON.stringify(racer),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      //Should handle error message ...!!!
       if (!response.ok) {
         throw new Error("Could not send data!");
       }
