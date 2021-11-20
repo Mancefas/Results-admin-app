@@ -48,9 +48,6 @@ const AddRacer = () => {
         if (!response.ok) {
           setSentToDB(false);
           setFailedToSendToDB("Nepavyko užregistruoti dalyvio!");
-          setTimeout(() => {
-            setFailedToSendToDB(false);
-          }, 3000);
         }
       }
 
@@ -76,7 +73,16 @@ const AddRacer = () => {
         height: "fit-content",
       }}
     >
-      {failedToSendToDB && <Alert severity="error">{failedToSendToDB}</Alert>}
+      {failedToSendToDB && (
+        <Alert
+          severity="error"
+          onClose={() => {
+            setFailedToSendToDB(false);
+          }}
+        >
+          {failedToSendToDB}
+        </Alert>
+      )}
       {sentToDB && <Alert severity="success">Dalyvis užregistruotas!</Alert>}
       <Box sx={{ height: "fit-content" }}>
         <form onSubmit={formSubmitHanlder}>
