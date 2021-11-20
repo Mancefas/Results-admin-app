@@ -1,6 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
-import { TextField, Container, Button, Box, Avatar } from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
+import {
+  TextField,
+  Container,
+  Button,
+  Box,
+  Avatar,
+  Alert,
+} from "@mui/material";
+
+import config from "../../config.json";
 
 let initialLoad = true;
 
@@ -8,14 +16,23 @@ const FinishTime = () => {
   const inputRef = useRef();
   const [racer, setRacer] = useState();
   const [sentOK, setSentOK] = useState();
+  const [notSent, setNotSent] = useState();
   const [countFinished, setCountFinished] = useState(0);
+  const [apiError, setApiError] = useState();
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setSentOK(false);
-    }, 300);
+    }, 500);
     return () => clearTimeout(timer);
   }, [sentOK]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setNotSent(false);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [notSent]);
 
   const raceStart = new Date("2021-10-17T11:00:00");
 
@@ -58,21 +75,28 @@ const FinishTime = () => {
       initialLoad = false;
       return;
     }
-
-    async function sendFinishTimeAndRaceNr(racer) {
-      const response = await fetch(
-        "https://gif-rezultatai-b73a6-default-rtdb.europe-west1.firebasedatabase.app/rez.json",
-        {
+    try {
+      if (racer === undefined) {
+        return;
+      }
+      async function sendFinishTimeAndRaceNr(racer) {
+        const response = await fetch(config.API_URL_RACERS, {
           method: "POST",
           body: JSON.stringify(racer),
           headers: {
             "Content-Type": "application/json",
           },
+        });
+        setSentOK(response.ok);
+        if (!response.ok) {
+          setNotSent(true);
+          setApiError("Klaida siunčiant! ");
         }
-      );
-      setSentOK(response.ok);
+      }
+      sendFinishTimeAndRaceNr(racer);
+    } catch (error) {
+      setApiError(error);
     }
-    sendFinishTimeAndRaceNr(racer);
   }, [racer]);
 
   return (
@@ -82,6 +106,17 @@ const FinishTime = () => {
         textAlign: "center",
       }}
     >
+      {apiError && (
+        <Alert
+          variant="filled"
+          severity="error"
+          onClose={() => {
+            setApiError(false);
+          }}
+        >
+          {apiError}
+        </Alert>
+      )}
       <Box
         sx={{
           display: "flex",
@@ -118,7 +153,8 @@ const FinishTime = () => {
             inputRef={inputRef}
           />
 
-          {sentOK && <CheckIcon color={"success"} />}
+          {notSent && <Alert severity="error"></Alert>}
+          {sentOK && <Alert severity="success"></Alert>}
         </Box>
         <Button
           sx={{
