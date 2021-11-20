@@ -23,12 +23,12 @@ const AddRacer = () => {
       vardas: [e.target.vardas.value, e.target.pavarde.value],
     });
 
-    e.target[0].value = "";
-    e.target[2].value = "";
-    e.target[4].value = "";
-    e.target[6].value = "";
-    e.target[8].value = "";
-    e.target[10].value = "";
+    e.target.vardas.value = "";
+    e.target.pavarde.value = "";
+    e.target.distancija.value = "";
+    e.target.dviratis.value = "";
+    e.target.grupe.value = "";
+    e.target.startoNr.value = "";
   };
   useEffect(() => {
     try {
