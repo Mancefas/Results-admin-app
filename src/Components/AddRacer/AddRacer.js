@@ -1,4 +1,4 @@
-import { Container, TextField, Box, Button } from "@mui/material";
+import { Container, TextField, Box, Button, Alert } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
 
 import config from "../../config.json";
@@ -8,6 +8,8 @@ let initialLoad = true;
 const AddRacer = () => {
   const inputRef = useRef();
   const [racer, setRacer] = useState();
+  const [sentToDB, setSentToDB] = useState(false);
+  const [failedToSendToDB, setFailedToSendToDB] = useState(false);
 
   const formSubmitHanlder = (e) => {
     e.preventDefault();
@@ -32,27 +34,36 @@ const AddRacer = () => {
   };
 
   useEffect(() => {
-    async function sendNewRacer(racer) {
-      const response = await fetch(config.API_URL_RACERS, {
-        method: "POST",
-        body: JSON.stringify(racer),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    try {
+      async function sendNewRacer(racer) {
+        const response = await fetch(config.API_URL_RACERS, {
+          method: "POST",
+          body: JSON.stringify(racer),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-      //Should handle error message ...!!!
-      if (!response.ok) {
-        throw new Error("Could not send data!");
+        //Should handle error message ...!!!
+        if (!response.ok) {
+          throw new Error("Could not send data!");
+        }
       }
-    }
 
-    if (initialLoad) {
-      initialLoad = false;
-      return;
-    }
+      if (initialLoad) {
+        initialLoad = false;
+        return;
+      }
 
-    sendNewRacer(racer);
+      sendNewRacer(racer);
+
+      setSentToDB(true);
+      setTimeout(() => {
+        setSentToDB(false);
+      }, 3000);
+    } catch (error) {
+      setFailedToSendToDB(true);
+    }
   }, [racer]);
 
   return (
@@ -63,6 +74,10 @@ const AddRacer = () => {
         height: "fit-content",
       }}
     >
+      {failedToSendToDB && (
+        <Alert severity="success">Nepavyko užregistruoti dalyvio !</Alert>
+      )}
+      {sentToDB && <Alert severity="success">Dalyvis užregistruotas!</Alert>}
       <Box sx={{ height: "fit-content" }}>
         <form onSubmit={formSubmitHanlder}>
           <Box
