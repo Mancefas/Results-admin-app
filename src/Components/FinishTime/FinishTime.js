@@ -125,7 +125,7 @@ const FinishTime = () => {
           padding: "2rem",
         }}
       >
-        <Avatar sx={{ color: "#FFFFFF", bgcolor: "#0288d1" }} variant="square">
+        <Avatar sx={{ color: "#FFFFFF", bgcolor: "#3f50b5" }} variant="square">
           {countFinished}
         </Avatar>
       </Box>
