@@ -1,14 +1,39 @@
 import { Container, TextField, Box, Button, Alert } from "@mui/material";
-import React, { useState, useEffect, useRef } from "react";
-
+import React, { useState, useEffect } from "react";
 import config from "../../config.json";
 
+import useInputValidation from "../../hooks/use-input-valid";
+const inputNotEmpty = (value) => value.trim() !== "";
+let validForm = false;
+
 const AddRacer = () => {
-  const inputRef = useRef();
   const [racer, setRacer] = useState(undefined);
   const [sentToDB, setSentToDB] = useState(false);
   const [failedToSendToDB, setFailedToSendToDB] = useState(false);
 
+  // Validating name input
+  const {
+    value: nameValue,
+    valid: nameValid,
+    notValid: nameError,
+    userInputHandler: nameInputHandler,
+    userInputTouchedHandler: nameInputTouched,
+    reset: setUserInput,
+  } = useInputValidation(inputNotEmpty);
+
+  // Validating surname input
+  const {
+    value: surnameValue,
+    valid: surnameValid,
+    notValid: surnameError,
+    userInputHandler: surnameInputHandler,
+    userInputTouchedHandler: surnameInputTouched,
+    reset: setSurnameInput,
+  } = useInputValidation(inputNotEmpty);
+
+  if (nameValid && surnameValid) {
+    validForm = true;
+  }
   const formSubmitHanlder = (e) => {
     e.preventDefault();
 
@@ -23,8 +48,8 @@ const AddRacer = () => {
       vardas: [e.target.vardas.value, e.target.pavarde.value],
     });
 
-    e.target.vardas.value = "";
-    e.target.pavarde.value = "";
+    setUserInput();
+    setSurnameInput();
     e.target.distancija.value = "";
     e.target.dviratis.value = "";
     e.target.grupe.value = "";
@@ -90,12 +115,20 @@ const AddRacer = () => {
             <TextField
               label="Vardas"
               name="vardas"
-              inputRef={inputRef}
+              value={nameValue}
+              error={nameError}
+              onChange={nameInputHandler}
+              onBlur={nameInputTouched}
+              helperText={nameError ? "Dalyvio vardas būtinas" : ""}
             ></TextField>
             <TextField
               label="Pavardė"
               name="pavarde"
-              inputRef={inputRef}
+              value={surnameValue}
+              error={surnameError}
+              onChange={surnameInputHandler}
+              onBlur={surnameInputTouched}
+              helperText={surnameError ? "Dalyvio pavardė būtina" : ""}
             ></TextField>
           </Box>
           <TextField label="Distancija" name="distancija"></TextField>
@@ -103,7 +136,12 @@ const AddRacer = () => {
           <TextField label="Grupė" name="grupe"></TextField>
           <TextField label="Starto nr." name="startoNr"></TextField>
           <Box>
-            <Button type="submit" variant="contained" sx={{ margin: "0.5rem" }}>
+            <Button
+              disabled={!validForm}
+              type="submit"
+              variant="contained"
+              sx={{ margin: "0.5rem" }}
+            >
               Suvesti
             </Button>
           </Box>

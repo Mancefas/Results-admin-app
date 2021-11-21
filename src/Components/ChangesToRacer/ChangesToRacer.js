@@ -4,8 +4,26 @@ import { useSelector } from "react-redux";
 
 import { Container, TextField, Box, Button } from "@mui/material";
 
+import useInputValidation from "../../hooks/use-input-valid";
+const inputNotEmpty = (value) => value.trim() !== "";
+let validForm = false;
+
 const ChangesToRacer = () => {
   const [newTime, setNewTime] = useState();
+
+  //Validate input
+  const {
+    value: raceNumberValue,
+    valid: validNR,
+    notValid: notValidNR,
+    userInputHandler: raceNRInputHandler,
+    userInputTouchedHandler: raceNrInputTouchedHandler,
+    reset: raceNumberInputField,
+  } = useInputValidation(inputNotEmpty);
+
+  if (validNR) {
+    validForm = true;
+  }
 
   //Console.log data before API post
   console.log(newTime);
@@ -37,7 +55,7 @@ const ChangesToRacer = () => {
     };
     setNewTime(newRaceTime);
 
-    e.target.racerNumber.value = "";
+    raceNumberInputField();
     e.target.newTimeInput.value = "";
   };
 
@@ -55,7 +73,16 @@ const ChangesToRacer = () => {
     >
       <form onSubmit={submitedHandler}>
         <Box p={1}>
-          <TextField label="Dalyvio numeris" name="racerNumber"></TextField>
+          <TextField
+            type="number"
+            label="Dalyvio numeris"
+            name="racerNumber"
+            error={notValidNR}
+            value={raceNumberValue}
+            onChange={raceNRInputHandler}
+            onBlur={raceNrInputTouchedHandler}
+            helperText={notValidNR ? "Reikalingas dalyvio nr." : ""}
+          ></TextField>
         </Box>
         <Box p={1}>
           <TextField
@@ -66,7 +93,7 @@ const ChangesToRacer = () => {
             sx={{ width: "70%" }}
           ></TextField>
         </Box>
-        <Button p={1} type="submit" variant="contained">
+        <Button disabled={!validForm} p={1} type="submit" variant="contained">
           Keisti
         </Button>
       </form>
