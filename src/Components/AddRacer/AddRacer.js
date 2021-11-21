@@ -4,7 +4,9 @@ import {
   Box,
   Button,
   Alert,
-  Autocomplete,
+  Select,
+  MenuItem,
+  InputLabel,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import config from "../../config.json";
@@ -54,6 +56,20 @@ const AddRacer = () => {
   if (nameValid && surnameValid && raceNRValid) {
     validForm = true;
   }
+
+  // select change handlers
+  const groupChangeHandler = (event) => {
+    setRaceGroupInputValue(event.target.value);
+  };
+
+  const bicycleChangeHandler = (event) => {
+    setBicycleInputValue(event.target.value);
+  };
+
+  const distanceChangeHandler = (event) => {
+    setRaceDistanceInputValue(event.target.value);
+  };
+
   const formSubmitHanlder = (e) => {
     e.preventDefault();
 
@@ -70,10 +86,10 @@ const AddRacer = () => {
     setUserInput();
     setSurnameInput();
     setRaceNRInput();
+    setRaceDistanceInputValue();
+    setBicycleInputValue();
+    setRaceGroupInputValue();
     validForm = false;
-
-    // e.target.dviratis.value = "";
-    // e.target.grupe.value = "";
   };
   useEffect(() => {
     try {
@@ -161,41 +177,74 @@ const AddRacer = () => {
               helperText={raceNRError ? "Dalyvio numeris būtinas" : ""}
             ></TextField>
           </Box>
-          <Autocomplete
-            inputValue={raceDistanceInputValue}
-            onInputChange={(event, newInputValue) => {
-              setRaceDistanceInputValue(newInputValue);
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "1rem",
             }}
-            disablePortal
-            id="race-groups"
-            options={config.RACE_DISTANCE}
-            sx={{}}
-            renderInput={(params) => (
-              <TextField {...params} label="Distancija" />
-            )}
-          />
-          <Autocomplete
-            inputValue={bicycleInputValue}
-            onInputChange={(event, newInputValue) => {
-              setBicycleInputValue(newInputValue);
+          >
+            <InputLabel id="race-bike">Distancija</InputLabel>
+            <Select
+              sx={{ width: "36%" }}
+              labelId="Dviratis"
+              id="bicycle"
+              value={raceDistanceInputValue}
+              onChange={distanceChangeHandler}
+            >
+              {config.RACE_DISTANCE.map((itm) => (
+                <MenuItem value={`${itm}`}>{itm}</MenuItem>
+              ))}
+            </Select>
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "1rem",
             }}
-            disablePortal
-            id="bicycle"
-            options={config.BICYCLE}
-            sx={{}}
-            renderInput={(params) => <TextField {...params} label="Dviratis" />}
-          />
-          <Autocomplete
-            inputValue={raceGroupInputValue}
-            onInputChange={(event, newInputValue) => {
-              setRaceGroupInputValue(newInputValue);
+          >
+            <InputLabel id="race-bike">Dviratis</InputLabel>
+            <Select
+              sx={{ width: "42%" }}
+              labelId="Dviratis"
+              id="bicycle"
+              value={bicycleInputValue}
+              onChange={bicycleChangeHandler}
+            >
+              {config.BICYCLE.map((itm) => (
+                <MenuItem value={`${itm}`}>{itm}</MenuItem>
+              ))}
+            </Select>
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "1rem",
             }}
-            disablePortal
-            id="race-group"
-            options={config.GROUP}
-            sx={{}}
-            renderInput={(params) => <TextField {...params} label="Grupė" />}
-          />
+          >
+            <InputLabel id="race-group">Grupė</InputLabel>
+            <Select
+              sx={{ width: "45%" }}
+              labelId="Grupė"
+              id="race-group"
+              value={raceGroupInputValue}
+              onChange={groupChangeHandler}
+            >
+              {config.GROUP.map((itm) => (
+                <MenuItem value={`${itm}`}>{itm}</MenuItem>
+              ))}
+            </Select>
+          </Box>
           <Box>
             <Button
               disabled={!validForm}
