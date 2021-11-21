@@ -1,4 +1,11 @@
-import { Container, TextField, Box, Button, Alert } from "@mui/material";
+import {
+  Container,
+  TextField,
+  Box,
+  Button,
+  Alert,
+  Autocomplete,
+} from "@mui/material";
 import React, { useState, useEffect } from "react";
 import config from "../../config.json";
 
@@ -10,6 +17,9 @@ const AddRacer = () => {
   const [racer, setRacer] = useState(undefined);
   const [sentToDB, setSentToDB] = useState(false);
   const [failedToSendToDB, setFailedToSendToDB] = useState(false);
+  const [raceDistanceInputValue, setRaceDistanceInputValue] = useState();
+  const [bicycleInputValue, setBicycleInputValue] = useState();
+  const [raceGroupInputValue, setRaceGroupInputValue] = useState();
 
   // Validating name input
   const {
@@ -31,29 +41,39 @@ const AddRacer = () => {
     reset: setSurnameInput,
   } = useInputValidation(inputNotEmpty);
 
-  if (nameValid && surnameValid) {
+  //Validate race number input
+  const {
+    value: raceNRValue,
+    valid: raceNRValid,
+    notValid: raceNRError,
+    userInputHandler: raceNRInputHandler,
+    userInputTouchedHandler: raceNRInputTouched,
+    reset: setRaceNRInput,
+  } = useInputValidation(inputNotEmpty);
+
+  if (nameValid && surnameValid && raceNRValid) {
     validForm = true;
   }
   const formSubmitHanlder = (e) => {
     e.preventDefault();
 
-    const dviratis = e.target.dviratis.value;
-    const grupe = e.target.grupe.value;
+    // const dviratis = e.target.dviratis.value;
 
     setRacer({
-      dist: +e.target.distancija.value,
-      dviratis: dviratis.toUpperCase(),
-      grupe: grupe.toUpperCase(),
+      dist: +raceDistanceInputValue,
+      dviratis: bicycleInputValue,
+      grupe: raceGroupInputValue,
       startoNr: +e.target.startoNr.value,
       vardas: [e.target.vardas.value, e.target.pavarde.value],
     });
 
     setUserInput();
     setSurnameInput();
-    e.target.distancija.value = "";
-    e.target.dviratis.value = "";
-    e.target.grupe.value = "";
-    e.target.startoNr.value = "";
+    setRaceNRInput();
+    validForm = false;
+
+    // e.target.dviratis.value = "";
+    // e.target.grupe.value = "";
   };
   useEffect(() => {
     try {
@@ -130,11 +150,52 @@ const AddRacer = () => {
               onBlur={surnameInputTouched}
               helperText={surnameError ? "Dalyvio pavardė būtina" : ""}
             ></TextField>
+            <TextField
+              type="number"
+              label="Starto nr."
+              name="startoNr"
+              value={raceNRValue}
+              error={raceNRError}
+              onChange={raceNRInputHandler}
+              onBlur={raceNRInputTouched}
+              helperText={raceNRError ? "Dalyvio numeris būtinas" : ""}
+            ></TextField>
           </Box>
-          <TextField label="Distancija" name="distancija"></TextField>
-          <TextField label="Dviratis" name="dviratis"></TextField>
-          <TextField label="Grupė" name="grupe"></TextField>
-          <TextField label="Starto nr." name="startoNr"></TextField>
+          <Autocomplete
+            inputValue={raceDistanceInputValue}
+            onInputChange={(event, newInputValue) => {
+              setRaceDistanceInputValue(newInputValue);
+            }}
+            disablePortal
+            id="race-groups"
+            options={config.RACE_DISTANCE}
+            sx={{}}
+            renderInput={(params) => (
+              <TextField {...params} label="Distancija" />
+            )}
+          />
+          <Autocomplete
+            inputValue={bicycleInputValue}
+            onInputChange={(event, newInputValue) => {
+              setBicycleInputValue(newInputValue);
+            }}
+            disablePortal
+            id="bicycle"
+            options={config.BICYCLE}
+            sx={{}}
+            renderInput={(params) => <TextField {...params} label="Dviratis" />}
+          />
+          <Autocomplete
+            inputValue={raceGroupInputValue}
+            onInputChange={(event, newInputValue) => {
+              setRaceGroupInputValue(newInputValue);
+            }}
+            disablePortal
+            id="race-group"
+            options={config.GROUP}
+            sx={{}}
+            renderInput={(params) => <TextField {...params} label="Grupė" />}
+          />
           <Box>
             <Button
               disabled={!validForm}
