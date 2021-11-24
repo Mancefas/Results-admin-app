@@ -42,7 +42,7 @@ const FinishTime = () => {
     const currentTime = new Date();
 
     const finishedRacer = {
-      dalyvis: raceNumber,
+      dalyvis: +raceNumber,
       startoLaikas: `${raceStart
         .getHours()
         .toString()
@@ -145,12 +145,12 @@ const FinishTime = () => {
           }}
         >
           <TextField
+            type="number"
             sx={{ width: "50%" }}
             label="Dalyvio nr."
             color="primary"
             focused
             size="medium"
-            type={"text"}
             inputRef={inputRef}
           />
 
