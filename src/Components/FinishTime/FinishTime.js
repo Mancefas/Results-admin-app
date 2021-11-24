@@ -34,7 +34,7 @@ const FinishTime = () => {
     return () => clearTimeout(timer);
   }, [notSent]);
 
-  const raceStart = new Date("2021-10-17T11:00:00");
+  const raceStart = new Date(config.RACE_START);
 
   const inputHandler = () => {
     setCountFinished((count) => count + 1);
@@ -80,7 +80,7 @@ const FinishTime = () => {
         return;
       }
       async function sendFinishTimeAndRaceNr(racer) {
-        const response = await fetch(config.API_URL_RACERS, {
+        const response = await fetch(config.API_URL_RESULT, {
           method: "POST",
           body: JSON.stringify(racer),
           headers: {
