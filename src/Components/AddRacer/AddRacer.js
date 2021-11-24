@@ -73,8 +73,6 @@ const AddRacer = () => {
   const formSubmitHanlder = (e) => {
     e.preventDefault();
 
-    // const dviratis = e.target.dviratis.value;
-
     setRacer({
       dist: +raceDistanceInputValue,
       dviratis: bicycleInputValue,
@@ -86,9 +84,6 @@ const AddRacer = () => {
     setUserInput();
     setSurnameInput();
     setRaceNRInput();
-    setRaceDistanceInputValue();
-    setBicycleInputValue();
-    setRaceGroupInputValue();
     validForm = false;
   };
   useEffect(() => {
