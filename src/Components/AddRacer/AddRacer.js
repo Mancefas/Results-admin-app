@@ -53,7 +53,14 @@ const AddRacer = () => {
     reset: setRaceNRInput,
   } = useInputValidation(inputNotEmpty);
 
-  if (nameValid && surnameValid && raceNRValid) {
+  if (
+    nameValid &&
+    surnameValid &&
+    raceNRValid &&
+    raceDistanceInputValue &&
+    bicycleInputValue &&
+    raceGroupInputValue
+  ) {
     validForm = true;
   }
 
