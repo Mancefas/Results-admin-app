@@ -19,9 +19,9 @@ const AddRacer = () => {
   const [racer, setRacer] = useState(undefined);
   const [sentToDB, setSentToDB] = useState(false);
   const [failedToSendToDB, setFailedToSendToDB] = useState(false);
-  const [raceDistanceInputValue, setRaceDistanceInputValue] = useState();
-  const [bicycleInputValue, setBicycleInputValue] = useState();
-  const [raceGroupInputValue, setRaceGroupInputValue] = useState();
+  const [raceDistanceInputValue, setRaceDistanceInputValue] = useState("");
+  const [bicycleInputValue, setBicycleInputValue] = useState("");
+  const [raceGroupInputValue, setRaceGroupInputValue] = useState("");
 
   // Validating name input
   const {
@@ -127,6 +127,7 @@ const AddRacer = () => {
       sx={{
         textAlign: "center",
         height: "fit-content",
+        minHeight: "75vh",
       }}
     >
       {failedToSendToDB && (
