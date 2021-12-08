@@ -7,13 +7,16 @@ import reportWebVitals from "./reportWebVitals";
 
 import { Provider } from "react-redux";
 import store from "./store/index";
+import { AuthContextProvider } from "./store/auth-context";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>,
+  <AuthContextProvider>
+    <React.StrictMode>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </React.StrictMode>
+  </AuthContextProvider>,
   document.getElementById("root")
 );
 
