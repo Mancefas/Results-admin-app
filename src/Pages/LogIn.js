@@ -24,8 +24,8 @@ const LogIn = () => {
     const enteredEmail = emailRef.current.value;
     const enteredPassword = passwordref.current.value;
 
-    try {
-      async function fetching(email, pass) {
+    async function fetching(email, pass) {
+      try {
         const response = await fetch(
           `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${config.API_KEY}`,
           {
@@ -41,16 +41,24 @@ const LogIn = () => {
           }
         );
         const data = await response.json();
+
         if (response.ok) {
           context.login(data.idToken);
+        }
+        if (!response.ok) {
+          throw new Error(data.error.message);
+        }
+      } catch (error) {
+        if (error.message === "EMAIL_NOT_FOUND") {
+          setError("Nėra tokio el. pašto ");
+        } else if (error.message === "INVALID_PASSWORD") {
+          setError("Neteisingas slaptažodis");
         } else {
-          throw new Error(data.error.errors[0].message);
+          setError(error.message);
         }
       }
-      fetching(enteredEmail, enteredPassword);
-    } catch (error) {
-      setError(error);
     }
+    fetching(enteredEmail, enteredPassword);
   };
 
   return (
@@ -96,6 +104,7 @@ const LogIn = () => {
             </div>
             <div>
               <TextField
+                type="password"
                 label="slaptažodis"
                 variant="outlined"
                 inputRef={passwordref}
