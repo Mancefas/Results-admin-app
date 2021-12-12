@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   TextField,
   Container,
@@ -9,10 +9,13 @@ import {
 } from "@mui/material";
 
 import config from "../../config.json";
+import AuthContext from "../../store/auth-context";
 
 let initialLoad = true;
 
 const FinishTime = () => {
+  const context = useContext(AuthContext);
+
   const inputRef = useRef();
   const [racer, setRacer] = useState();
   const [sentOK, setSentOK] = useState();
@@ -80,13 +83,16 @@ const FinishTime = () => {
         return;
       }
       async function sendFinishTimeAndRaceNr(racer) {
-        const response = await fetch(config.API_URL_RESULT, {
-          method: "POST",
-          body: JSON.stringify(racer),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `${config.API_URL_RESULT}?auth=${context.token}`,
+          {
+            method: "POST",
+            body: JSON.stringify(racer),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (response.ok) {
           setSentOK(true);
         } else {
@@ -98,7 +104,7 @@ const FinishTime = () => {
     } catch (error) {
       setApiError(error);
     }
-  }, [racer]);
+  }, [racer, context.token]);
 
   return (
     <Container

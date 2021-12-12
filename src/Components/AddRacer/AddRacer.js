@@ -8,14 +8,18 @@ import {
   MenuItem,
   InputLabel,
 } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import config from "../../config.json";
+
+import AuthContext from "../../store/auth-context";
 
 import useInputValidation from "../../hooks/use-input-valid";
 const inputNotEmpty = (value) => value.trim() !== "";
 let validForm = false;
 
 const AddRacer = () => {
+  const context = useContext(AuthContext);
+
   const [racer, setRacer] = useState(undefined);
   const [sentToDB, setSentToDB] = useState(false);
   const [failedToSendToDB, setFailedToSendToDB] = useState(false);
@@ -99,13 +103,16 @@ const AddRacer = () => {
         if (!racer) {
           return;
         }
-        const response = await fetch(config.API_URL_RACERS, {
-          method: "POST",
-          body: JSON.stringify(racer),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `${config.API_URL_RACERS}?auth=${context.token}`,
+          {
+            method: "POST",
+            body: JSON.stringify(racer),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (response.ok) {
           setSentToDB(true);
           setTimeout(() => {
@@ -119,7 +126,7 @@ const AddRacer = () => {
     } catch (error) {
       setFailedToSendToDB(error);
     }
-  }, [racer]);
+  }, [racer, context.token]);
 
   return (
     <Container
