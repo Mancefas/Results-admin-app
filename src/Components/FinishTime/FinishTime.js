@@ -78,11 +78,11 @@ const FinishTime = () => {
       initialLoad = false;
       return;
     }
-    try {
-      if (racer === undefined) {
-        return;
-      }
-      async function sendFinishTimeAndRaceNr(racer) {
+    if (racer === undefined) {
+      return;
+    }
+    async function sendFinishTimeAndRaceNr(racer) {
+      try {
         const response = await fetch(
           `${config.API_URL_RESULT}?auth=${context.token}`,
           {
@@ -95,15 +95,17 @@ const FinishTime = () => {
         );
         if (response.ok) {
           setSentOK(true);
-        } else {
+        } else if (!response.ok) {
           setNotSent(true);
-          setApiError("Klaida siunčiant! ");
+          throw new Error("Klaida siunčiant! ");
+        } else {
+          throw new Error();
         }
+      } catch (error) {
+        setApiError(error.message);
       }
-      sendFinishTimeAndRaceNr(racer);
-    } catch (error) {
-      setApiError(error);
     }
+    sendFinishTimeAndRaceNr(racer);
   }, [racer, context.token]);
 
   return (
