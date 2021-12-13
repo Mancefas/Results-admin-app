@@ -12,6 +12,7 @@ import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
 import FinishTime from "../Components/FinishTime/FinishTime";
 import AddRacer from "../Components/AddRacer/AddRacer";
 import ChangesToRacer from "../Components/ChangesToRacer/ChangesToRacer";
+import LogOutBtn from "../Components/LogOutBtn";
 
 function MainApp() {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ function MainApp() {
 
   return (
     <>
+      <LogOutBtn />
       <Box
         sx={{
           display: "flex",
