@@ -43,7 +43,10 @@ const LogIn = () => {
         const data = await response.json();
 
         if (response.ok) {
-          context.login(data.idToken);
+          const expirationTime = new Date(
+            new Date().getTime() + +data.expiresIn * 1000
+          );
+          context.login(data.idToken, expirationTime);
         }
         if (!response.ok) {
           throw new Error(data.error.message);
