@@ -19,21 +19,30 @@ const calculateRemainingTime = (expirationTime) => {
 export const AuthContextProvider = (props) => {
   const initialToken = localStorage.getItem("token");
   const [token, setToken] = useState(initialToken);
+  // const [refreshToken, setRefreshToken] = useState();
 
   const userIsLoggedIn = !!token;
 
   const logoutHandler = () => {
     setToken(null);
-    localStorage.removeItem("token");
+    localStorage.clear();
   };
 
-  const loginHandler = (token, expirationTime) => {
+  const loginHandler = (token, expirationTime, refreshToken) => {
     setToken(token);
     localStorage.setItem("token", token);
     const remainingTime = calculateRemainingTime(expirationTime);
-
     setTimeout(logoutHandler, remainingTime);
+    // localStorage.setItem("refreshToken", refreshToken);
+    // setRefreshToken(refreshToken);
   };
+
+  // Refresh function needed to leave a user logged in all the time
+  // const refreshLogInHandler = () => {
+  //   setToken(refreshToken);
+  //   // localStorage.removeItem("token");
+  //   // localStorage.setItem("refreshtoken", refreshToken);
+  // };
   const ContextValue = {
     token: token,
     loggedIn: userIsLoggedIn,

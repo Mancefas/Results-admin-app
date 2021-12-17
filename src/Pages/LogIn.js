@@ -46,7 +46,7 @@ const LogIn = () => {
           const expirationTime = new Date(
             new Date().getTime() + +data.expiresIn * 1000
           );
-          context.login(data.idToken, expirationTime);
+          context.login(data.idToken, expirationTime, data.refreshToken);
         }
         if (!response.ok) {
           throw new Error(data.error.message);
