@@ -46,7 +46,7 @@ function MainApp() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-around",
-          height: "80vh",
+          minHeight: "80vh",
           padding: "1rem",
         }}
       >
