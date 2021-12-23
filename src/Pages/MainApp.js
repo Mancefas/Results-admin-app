@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { uiActions } from "../store/ui-slice";
@@ -16,6 +16,24 @@ import LogOutBtn from "../Components/LogOutBtn";
 
 function MainApp() {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", alertUser);
+    window.addEventListener("unload", leavingPageLogout);
+    return () => {
+      window.addEventListener("beforeunload", alertUser);
+      window.removeEventListener("unload", leavingPageLogout);
+    };
+  }, []);
+
+  const leavingPageLogout = () => {
+    localStorage.clear();
+  };
+
+  const alertUser = (e) => {
+    e.preventDefault();
+    e.returnValue = "";
+  };
 
   const showFinishTime = useSelector(
     (state) => state.ui.showFinishTimeComponent
