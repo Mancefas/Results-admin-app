@@ -1,61 +1,85 @@
-import React, { useState } from "react";
-
-import { useSelector } from "react-redux";
+import React, { useState, useEffect, useContext } from "react";
 
 import { Container, TextField, Box, Button } from "@mui/material";
 
-import useInputValidation from "../../hooks/use-input-valid";
-const inputNotEmpty = (value) => value.trim() !== "";
-let validForm = false;
+import config from "../../config.json";
+import AuthContext from "../../store/auth-context";
+
+import SelectButton from "./SelectButton";
 
 const ChangesToRacer = () => {
+  const context = useContext(AuthContext);
+  const [racerNR, setRacerNr] = useState();
   const [newTime, setNewTime] = useState();
+  const [dataOfAllResults, setDataOfAllResults] = useState();
 
-  //Validate input
-  const {
-    value: raceNumberValue,
-    valid: validNR,
-    notValid: notValidNR,
-    userInputHandler: raceNRInputHandler,
-    userInputTouchedHandler: raceNrInputTouchedHandler,
-    reset: raceNumberInputField,
-  } = useInputValidation(inputNotEmpty);
+  const racerNrHandler = (number) => {
+    setRacerNr(number);
+  };
 
-  if (validNR) {
-    validForm = true;
-  }
+  // Get data of all racers
+  const fetchindData = async () => {
+    try {
+      const response = await fetch(config.API_URL_RESULT);
+      const data = await response.json();
+      const dataToArrayOfObjects = [];
+      for (const key in data) {
+        dataToArrayOfObjects.push({
+          id: key,
+          startoLaikas: data[key].startoLaikas,
+          finisoLaikas: data[key].finisoLaikas,
+          vaziavimoLaikas: data[key].vaziavimoLaikas,
+          dalyvis: data[key].dalyvis,
+        });
+      }
+      setDataOfAllResults(dataToArrayOfObjects);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchindData();
+  }, []);
 
-  //Console.log data before API post
-  console.log(newTime);
+  // change finishing time on firebase database
+  const replaceRaceTime = async () => {
+    const changedTime = newTime.finisoLaikas;
+    const racerForChanges = dataOfAllResults.filter(
+      (number) => number.dalyvis === racerNR
+    );
+    const firebaseIdOfRacer = racerForChanges[0].id;
 
-  const startTime = useSelector((state) => state.sharedData.raceStart);
+    try {
+      await fetch(
+        `${config.API_URL_FOR_CHANGES}${firebaseIdOfRacer}.json?auth=${context.token}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ finisoLaikas: `${changedTime}` }),
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  useEffect(() => {
+    if (!newTime) {
+      return;
+    }
+    replaceRaceTime();
+    // eslint-disable-next-line
+  }, [newTime]);
+
+  // Get new finishing time from textfield
   const submitedHandler = (e) => {
     e.preventDefault();
 
-    const newFinishTime = new Date(`2021/11/11/${e.target.newTimeInput.value}`);
-
     const newRaceTime = {
-      dalyvis: e.target.racerNumber.value,
-      startoLaikas: `${startTime
-        .getHours()
-        .toString()
-        .padStart(2, 0)}:${startTime
-        .getMinutes()
-        .toString()
-        .padStart(2, 0)}:${startTime.getSeconds().toString().padStart(2, 0)}`,
+      dalyvis: racerNR,
       finisoLaikas: e.target.newTimeInput.value,
-      vaziavimoLaikas: `${newFinishTime.getHours() - startTime.getHours()}:${(
-        newFinishTime.getMinutes() - startTime.getMinutes()
-      )
-        .toString()
-        .padStart(2, 0)}:${(newFinishTime.getSeconds() - startTime.getSeconds())
-        .toString()
-        .padStart(2, 0)}`,
     };
     setNewTime(newRaceTime);
 
-    raceNumberInputField();
     e.target.newTimeInput.value = "";
   };
 
@@ -73,16 +97,12 @@ const ChangesToRacer = () => {
     >
       <form onSubmit={submitedHandler}>
         <Box p={1}>
-          <TextField
-            type="number"
-            label="Dalyvio numeris"
+          <SelectButton
+            raceData={dataOfAllResults}
+            racerNrHandler={racerNrHandler}
+            racerNR={racerNR}
             name="racerNumber"
-            error={notValidNR}
-            value={raceNumberValue}
-            onChange={raceNRInputHandler}
-            onBlur={raceNrInputTouchedHandler}
-            helperText={notValidNR ? "Reikalingas dalyvio nr." : ""}
-          ></TextField>
+          />
         </Box>
         <Box p={1}>
           <TextField
@@ -93,7 +113,12 @@ const ChangesToRacer = () => {
             sx={{ width: "70%" }}
           ></TextField>
         </Box>
-        <Button disabled={!validForm} p={1} type="submit" variant="contained">
+        <Button
+          disabled={racerNR === undefined ? true : false}
+          p={1}
+          type="submit"
+          variant="contained"
+        >
           Keisti
         </Button>
       </form>

@@ -91,8 +91,6 @@ function MainApp() {
           onClick={showAddRacerHandler}
         />
         <BottomNavigationAction
-          sx={{ opacity: "0.4" }}
-          disabled="true"
           label="Taisyti dalyvio laiką "
           icon={<ConstructionIcon />}
           onClick={showChangesToRacerHandler}
