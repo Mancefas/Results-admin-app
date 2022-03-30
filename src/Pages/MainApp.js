@@ -13,6 +13,7 @@ import FinishTime from "../Components/FinishTime/FinishTime";
 import AddRacer from "../Components/AddRacer/AddRacer";
 import ChangesToRacer from "../Components/ChangesToRacer/ChangesToRacer";
 import LogOutBtn from "../Components/LogOutBtn";
+import LogoutReminder from "../Components/LogoutReminder/LogoutReminder";
 
 function MainApp() {
   const dispatch = useDispatch();
@@ -59,12 +60,13 @@ function MainApp() {
   return (
     <>
       <LogOutBtn />
+      <LogoutReminder />
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-around",
-          minHeight: "80vh",
+          minHeight: "75vh",
           padding: "1rem",
         }}
       >
