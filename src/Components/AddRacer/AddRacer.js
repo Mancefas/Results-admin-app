@@ -196,11 +196,11 @@ const AddRacer = () => {
               gap: "1rem",
             }}
           >
-            <InputLabel id="race-bike">Distancija</InputLabel>
+            <InputLabel id="race-distance">Distancija</InputLabel>
             <Select
               sx={{ width: "36%" }}
               labelId="Dviratis"
-              id="bicycle"
+              id="race-distance"
               value={raceDistanceInputValue}
               onChange={distanceChangeHandler}
             >
@@ -223,7 +223,7 @@ const AddRacer = () => {
             <Select
               sx={{ width: "42%" }}
               labelId="Dviratis"
-              id="bicycle"
+              id="race-bike"
               value={bicycleInputValue}
               onChange={bicycleChangeHandler}
             >
