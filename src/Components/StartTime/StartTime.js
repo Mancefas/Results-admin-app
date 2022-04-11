@@ -1,24 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
 
-import {
-  Container,
-  TextField,
-  Box,
-  Button,
-  Alert,
-  LinearProgress,
-} from "@mui/material";
+import { Container, Box, Button, Alert, LinearProgress } from "@mui/material";
 
 import config from "../../config.json";
 import AuthContext from "../../store/auth-context";
 
-import SelectButton from "./SelectButton";
+import SelectButton from "../ChangesToRacer/SelectButton";
 
-const ChangesToRacer = () => {
+const StartTime = () => {
   const context = useContext(AuthContext);
   const [racerNR, setRacerNr] = useState();
   const [newTime, setNewTime] = useState();
   const [dataOfAllResults, setDataOfAllResults] = useState();
+  const [dataWithNoStartTime, setDataWithNoStartTime] = useState();
 
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState(false);
@@ -27,7 +21,6 @@ const ChangesToRacer = () => {
   const racerNrHandler = (number) => {
     setRacerNr(number);
   };
-
   // functions to show only one message at the time
   const loadingMessageHandler = () => {
     setLoadingMessage(true);
@@ -63,16 +56,14 @@ const ChangesToRacer = () => {
   // Get data of all racers
   const fetchindData = async () => {
     try {
-      const response = await fetch(config.API_URL_RESULT);
+      const response = await fetch(config.API_URL_RACERS);
       const data = await response.json();
       const dataToArrayOfObjects = [];
       for (const key in data) {
         dataToArrayOfObjects.push({
           id: key,
-          startoLaikas: data[key].startoLaikas,
-          finisoLaikas: data[key].finisoLaikas,
-          vaziavimoLaikas: data[key].vaziavimoLaikas,
-          dalyvis: data[key].dalyvis,
+          dalyvis: data[key].startoNr,
+          start: data[key].startoLaikas,
         });
       }
       setDataOfAllResults(dataToArrayOfObjects);
@@ -84,27 +75,41 @@ const ChangesToRacer = () => {
       errorMessageHandler(error.message);
     }
   };
-
   useEffect(() => {
     fetchindData();
     // eslint-disable-next-line
   }, []);
 
-  // change finishing time on firebase database
-  const replaceRaceTime = async () => {
-    const changedTime = newTime.finisoLaikas;
-    const racerForChanges = dataOfAllResults.filter(
+  // sort data to get only id that don't have race start time
+  const getDataWithNoStartTime = () => {
+    const sort = dataOfAllResults.filter(
+      (number) => number.start === undefined
+    );
+    setDataWithNoStartTime(sort);
+  };
+  useEffect(() => {
+    if (!dataOfAllResults) {
+      return;
+    }
+    getDataWithNoStartTime();
+    // eslint-disable-next-line
+  }, [dataOfAllResults]);
+
+  // add starting time on firebase database
+  const addStartTimeToRacer = async () => {
+    const startTime = newTime.startoLaikas;
+    const racerToAddStartTimeTo = dataOfAllResults.filter(
       (number) => number.dalyvis === racerNR
     );
-    const firebaseIdOfRacer = racerForChanges[0].id;
+    const firebaseIdOfRacer = racerToAddStartTimeTo[0].id;
     loadingMessageHandler();
 
     try {
       const response = await fetch(
-        `${config.API_URL_FOR_CHANGES}${firebaseIdOfRacer}.json?auth=${context.token}`,
+        `${config.API_URL_FOR_STARTTIME}${firebaseIdOfRacer}.json?auth=${context.token}`,
         {
           method: "PATCH",
-          body: JSON.stringify({ finisoLaikas: `${changedTime}` }),
+          body: JSON.stringify({ startoLaikas: `${startTime}` }),
         }
       );
       if (response.ok) {
@@ -121,85 +126,73 @@ const ChangesToRacer = () => {
     if (!newTime) {
       return;
     }
-    replaceRaceTime();
+    addStartTimeToRacer();
     // eslint-disable-next-line
   }, [newTime]);
 
   // Get new finishing time from textfield
   const submitedHandler = (e) => {
     e.preventDefault();
+    const raceStart = new Date().getTime();
 
     const newRaceTime = {
       dalyvis: racerNR,
-      finisoLaikas: e.target.newTimeInput.value,
+      startoLaikas: `${raceStart}`,
     };
     setNewTime(newRaceTime);
-
-    e.target.newTimeInput.value = "";
-  };
-
-  const inputProps = {
-    step: 1,
   };
 
   return (
-    <Container
-      maxWidth="xs"
-      sx={{
-        textAlign: "center",
-        height: "fit-content",
-      }}
-    >
-      {loadingMessage && (
-        <LinearProgress sx={{ width: "50%", margin: "auto" }} />
-      )}
-      {successMessage && (
-        <Alert
-          severity="success"
-          variant="outlined"
-          sx={{ width: "fit-content", margin: "auto" }}
-        >
-          Laikas pakeistas!
-        </Alert>
-      )}
-      {errorMessage && (
-        <Alert
-          severity="error"
-          variant="outlined"
-          sx={{ width: "fit-content", margin: "auto" }}
-        >
-          Klaida! ({errorMessage})
-        </Alert>
-      )}
-      <form onSubmit={submitedHandler}>
-        <Box p={1}>
-          <SelectButton
-            raceData={dataOfAllResults}
-            racerNrHandler={racerNrHandler}
-            racerNR={racerNR}
-            name="racerNumber"
-          />
-        </Box>
-        <Box p={1}>
-          <TextField
-            label="Naujas finišo laikas"
-            type="time"
-            inputProps={inputProps}
-            name="newTimeInput"
-            sx={{ width: "70%" }}
-          ></TextField>
-        </Box>
-        <Button
-          disabled={racerNR === undefined ? true : false}
-          p={1}
-          type="submit"
-          variant="contained"
-        >
-          Keisti
-        </Button>
-      </form>
-    </Container>
+    <>
+      <Container
+        maxWidth="xs"
+        sx={{
+          textAlign: "center",
+          height: "fit-content",
+        }}
+      >
+        {loadingMessage && (
+          <LinearProgress sx={{ width: "50%", margin: "auto" }} />
+        )}
+        {successMessage && (
+          <Alert
+            severity="success"
+            variant="outlined"
+            sx={{ width: "fit-content", margin: "auto" }}
+          >
+            Laikas paleistas!
+          </Alert>
+        )}
+        {errorMessage && (
+          <Alert
+            severity="error"
+            variant="outlined"
+            sx={{ width: "fit-content", margin: "auto" }}
+          >
+            Klaida! ({errorMessage})
+          </Alert>
+        )}
+        <form onSubmit={submitedHandler}>
+          <Box p={1}>
+            <SelectButton
+              raceData={dataWithNoStartTime}
+              racerNrHandler={racerNrHandler}
+              racerNR={racerNR}
+              name="racerNumber"
+            />
+          </Box>
+          <Button
+            disabled={racerNR === undefined ? true : false}
+            p={1}
+            type="submit"
+            variant="contained"
+          >
+            Startas
+          </Button>
+        </form>
+      </Container>
+    </>
   );
 };
 
-export default ChangesToRacer;
+export default StartTime;
