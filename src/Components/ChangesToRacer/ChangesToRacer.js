@@ -71,8 +71,7 @@ const ChangesToRacer = () => {
           id: key,
           startoLaikas: data[key].startoLaikas,
           finisoLaikas: data[key].finisoLaikas,
-          vaziavimoLaikas: data[key].vaziavimoLaikas,
-          dalyvis: data[key].dalyvis,
+          dalyvis: data[key].startoNr,
         });
       }
       setDataOfAllResults(dataToArrayOfObjects);
@@ -128,10 +127,20 @@ const ChangesToRacer = () => {
   // Get new finishing time from textfield
   const submitedHandler = (e) => {
     e.preventDefault();
+    const raceDate = new Date(config.RACE_START);
+    const gotTimeFromInput = e.target.newTimeInput.value;
+    const newHours = gotTimeFromInput.slice(0, 2);
+    const newMinutes = gotTimeFromInput.slice(3, 5);
+    const newSeconds = gotTimeFromInput.slice(6, 8);
+    const newFinishingTime = raceDate.setHours(
+      newHours,
+      newMinutes,
+      newSeconds
+    );
 
     const newRaceTime = {
       dalyvis: racerNR,
-      finisoLaikas: e.target.newTimeInput.value,
+      finisoLaikas: newFinishingTime,
     };
     setNewTime(newRaceTime);
 
