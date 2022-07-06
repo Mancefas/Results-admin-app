@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 
-import { Container, Box, Button, Alert, LinearProgress } from "@mui/material";
+import { Container, Alert, LinearProgress } from "@mui/material";
 
 import config from "../../config.json";
 import AuthContext from "../../store/auth-context";
 
-import SelectButton from "../ChangesToRacer/SelectButton";
 import msToHoursMinutesSeconds from "../../Helpers/Helpers";
+import RacerBtn from "../RacerBtn";
 
 const FinishTime = () => {
   const context = useContext(AuthContext);
@@ -18,12 +18,6 @@ const FinishTime = () => {
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState(false);
-
-  const racerNrHandler = (number) => {
-    setRacerNr(number);
-  };
-
-  console.log(dataOfAllResults);
 
   // functions to show only one message at the time
   const loadingMessageHandler = () => {
@@ -47,6 +41,7 @@ const FinishTime = () => {
     setTimeout(() => {
       if (successMessage) {
         setSuccessMessage(false);
+        fetchindData();
       }
       if (errorMessage) {
         setErrorMessage(false);
@@ -143,13 +138,14 @@ const FinishTime = () => {
     // eslint-disable-next-line
   }, [dataOfAllResults]);
 
-  // Get new finishing time from textfield
-  const submitedHandler = (e) => {
-    e.preventDefault();
+  // Get and set new finishing time
+  const finishingTimeHandler = (number) => {
+    setRacerNr(number);
+    const gotNumberFromClick = number;
 
     const raceFinish = new Date().getTime();
     const raceStartFromAPI = dataOfAllResults.filter(
-      (number) => number.dalyvis === racerNR
+      (number) => number.dalyvis === gotNumberFromClick
     )[0].startoLaikas;
     const racingTimeInMilliseconds = raceFinish - raceStartFromAPI;
     const racingTimeInHMinSec = msToHoursMinutesSeconds(
@@ -195,7 +191,11 @@ const FinishTime = () => {
             Klaida! ({errorMessage})
           </Alert>
         )}
-        <form onSubmit={submitedHandler}>
+        <RacerBtn
+          raceData={dataWithNoFinishTime}
+          racerNrHandler={finishingTimeHandler}
+        />
+        {/* <form onSubmit={submitedHandler}>
           <Box p={1}>
             <SelectButton
               raceData={dataWithNoFinishTime}
@@ -212,7 +212,7 @@ const FinishTime = () => {
           >
             Finišavo
           </Button>
-        </form>
+        </form> */}
       </Container>
     </>
   );

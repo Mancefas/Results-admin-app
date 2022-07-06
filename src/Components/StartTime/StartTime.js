@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 
-import { Container, Box, Button, Alert, LinearProgress } from "@mui/material";
+import { Container, Alert, LinearProgress } from "@mui/material";
 
 import config from "../../config.json";
 import AuthContext from "../../store/auth-context";
 
-import SelectButton from "../ChangesToRacer/SelectButton";
+import RacerBtn from "../RacerBtn";
 
 const StartTime = () => {
   const context = useContext(AuthContext);
@@ -18,9 +18,6 @@ const StartTime = () => {
   const [successMessage, setSuccessMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState(false);
 
-  const racerNrHandler = (number) => {
-    setRacerNr(number);
-  };
   // functions to show only one message at the time
   const loadingMessageHandler = () => {
     setLoadingMessage(true);
@@ -43,6 +40,7 @@ const StartTime = () => {
     setTimeout(() => {
       if (successMessage) {
         setSuccessMessage(false);
+        fetchindData();
       }
       if (errorMessage) {
         setErrorMessage(false);
@@ -82,10 +80,10 @@ const StartTime = () => {
 
   // sort data to get only id that don't have race start time
   const getDataWithNoStartTime = () => {
-    const sort = dataOfAllResults.filter(
+    const sorted = dataOfAllResults.filter(
       (number) => number.start === undefined
     );
-    setDataWithNoStartTime(sort);
+    setDataWithNoStartTime(sorted);
   };
   useEffect(() => {
     if (!dataOfAllResults) {
@@ -130,13 +128,13 @@ const StartTime = () => {
     // eslint-disable-next-line
   }, [newTime]);
 
-  // Get new finishing time from textfield
-  const submitedHandler = (e) => {
-    e.preventDefault();
+  // Set starting time to racer
+  const racerNrHandler = (number) => {
+    setRacerNr(number);
     const raceStart = new Date().getTime();
 
     const newRaceTime = {
-      dalyvis: racerNR,
+      dalyvis: number,
       startoLaikas: `${raceStart}`,
     };
     setNewTime(newRaceTime);
@@ -172,24 +170,18 @@ const StartTime = () => {
             Klaida! ({errorMessage})
           </Alert>
         )}
-        <form onSubmit={submitedHandler}>
-          <Box p={1}>
-            <SelectButton
+
+        {/* <SelectButton
               raceData={dataWithNoStartTime}
               racerNrHandler={racerNrHandler}
               racerNR={racerNR}
               name="racerNumber"
-            />
-          </Box>
-          <Button
-            disabled={racerNR === undefined ? true : false}
-            p={1}
-            type="submit"
-            variant="contained"
-          >
-            Startas
-          </Button>
-        </form>
+            /> */}
+        <RacerBtn
+          raceData={dataWithNoStartTime}
+          racerNrHandler={racerNrHandler}
+          name="racerNumber"
+        />
       </Container>
     </>
   );
