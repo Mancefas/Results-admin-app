@@ -7,17 +7,19 @@ import AuthContext from "../../store/auth-context";
 
 import msToHoursMinutesSeconds from "../../Helpers/Helpers";
 import RacerBtn from "../RacerBtn";
+import NoRacer from "../NoRacer";
 
 const FinishTime = () => {
   const context = useContext(AuthContext);
   const [racerNR, setRacerNr] = useState();
   const [newTime, setNewTime] = useState();
   const [dataOfAllResults, setDataOfAllResults] = useState();
-  const [dataWithNoFinishTime, setDataWithNoFinishTime] = useState();
+  const [dataWithNoFinishTime, setDataWithNoFinishTime] = useState([]);
 
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState(false);
+  const [noRacers, setNoRacers] = useState(false);
 
   // functions to show only one message at the time
   const loadingMessageHandler = () => {
@@ -36,22 +38,6 @@ const FinishTime = () => {
     setErrorMessage(message);
   };
 
-  //show success or error message only for few seconds
-  useEffect(() => {
-    setTimeout(() => {
-      if (successMessage) {
-        setSuccessMessage(false);
-        fetchindData();
-      }
-      if (errorMessage) {
-        setErrorMessage(false);
-      }
-    }, 2500);
-    return () => {
-      clearTimeout();
-    };
-  }, [successMessage, errorMessage]);
-
   // Get data of all racers
   const fetchindData = async () => {
     try {
@@ -66,8 +52,8 @@ const FinishTime = () => {
           finish: data[key].finisoLaikas,
         });
       }
-      setDataOfAllResults(dataToArrayOfObjects);
       if (response.ok) {
+        setDataOfAllResults(dataToArrayOfObjects);
       } else {
         throw new Error(response.message);
       }
@@ -76,10 +62,28 @@ const FinishTime = () => {
     }
   };
 
+  //Make API call only when component renders for the first time
   useEffect(() => {
     fetchindData();
     // eslint-disable-next-line
   }, []);
+
+  //show success or error message only for few seconds
+  useEffect(() => {
+    setTimeout(() => {
+      if (successMessage) {
+        setSuccessMessage(false);
+        fetchindData();
+      }
+      if (errorMessage) {
+        setErrorMessage(false);
+      }
+    }, 2500);
+    return () => {
+      clearTimeout();
+    };
+    // eslint-disable-next-line
+  }, [successMessage, errorMessage]);
 
   // change finishing time on firebase database
   const addFinishTime = async () => {
@@ -128,6 +132,10 @@ const FinishTime = () => {
     const sort = dataOfAllResults.filter(
       (number) => number.finish === undefined && number.startoLaikas
     );
+
+    if (sort.length === 0) {
+      setNoRacers(true);
+    }
     setDataWithNoFinishTime(sort);
   };
   useEffect(() => {
@@ -195,24 +203,8 @@ const FinishTime = () => {
           raceData={dataWithNoFinishTime}
           racerNrHandler={finishingTimeHandler}
         />
-        {/* <form onSubmit={submitedHandler}>
-          <Box p={1}>
-            <SelectButton
-              raceData={dataWithNoFinishTime}
-              racerNrHandler={racerNrHandler}
-              racerNR={racerNR}
-              name="racerNumber"
-            />
-          </Box>
-          <Button
-            disabled={racerNR === undefined ? true : false}
-            p={1}
-            type="submit"
-            variant="contained"
-          >
-            Finišavo
-          </Button>
-        </form> */}
+
+        {noRacers && <NoRacer />}
       </Container>
     </>
   );
