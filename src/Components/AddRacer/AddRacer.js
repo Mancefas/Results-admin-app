@@ -212,28 +212,30 @@ const AddRacer = () => {
             </Box>
           )}
 
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "1rem",
-            }}
-          >
-            <InputLabel id="race-bike">Dviratis</InputLabel>
-            <Select
-              sx={{ width: "42%" }}
-              labelId="Dviratis"
-              id="bicycle"
-              value={bicycleInputValue}
-              onChange={bicycleChangeHandler}
+          {config.BICYCLE.length > 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "1rem",
+              }}
             >
-              {config.BICYCLE.map((itm) => (
-                <MenuItem value={`${itm}`}>{itm}</MenuItem>
-              ))}
-            </Select>
-          </Box>
+              <InputLabel id="race-bike">Dviratis</InputLabel>
+              <Select
+                sx={{ width: "42%" }}
+                labelId="Dviratis"
+                id="bicycle"
+                value={bicycleInputValue}
+                onChange={bicycleChangeHandler}
+              >
+                {config.BICYCLE.map((itm) => (
+                  <MenuItem value={`${itm}`}>{itm}</MenuItem>
+                ))}
+              </Select>
+            </Box>
+          )}
 
           <Box
             sx={{
