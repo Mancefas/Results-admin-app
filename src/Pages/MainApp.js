@@ -91,7 +91,7 @@ function MainApp() {
           setValue(newValue);
         }}
       >
-        {config.RACE_START.length == 0 && (
+        {config.RACE_START.length === 0 && (
           <BottomNavigationAction
             label="Starto Laikas"
             icon={<DirectionsBikeIcon />}
