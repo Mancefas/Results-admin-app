@@ -94,7 +94,7 @@ const AddRacer = () => {
       racerObject["dist"] = +raceDistanceInputValue;
     }
 
-    //If there is added "BICYCLE" in config file then add dist object
+    //If there is added "BICYCLE" in config file then add dviratis object
     if (config.BICYCLE.length > 0) {
       racerObject["dviratis"] = bicycleInputValue;
     }
