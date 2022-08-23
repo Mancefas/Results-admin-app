@@ -61,9 +61,8 @@ const AddRacer = () => {
     nameValid &&
     surnameValid &&
     raceNRValid &&
-    // raceDistanceInputValue &&
-    bicycleInputValue &&
-    raceGroupInputValue
+    raceGroupInputValue &&
+    (raceDistanceInputValue || bicycleInputValue)
   ) {
     validForm = true;
   }
@@ -84,13 +83,23 @@ const AddRacer = () => {
   const formSubmitHanlder = (e) => {
     e.preventDefault();
 
-    setRacer({
-      // dist: +raceDistanceInputValue,
-      dviratis: bicycleInputValue,
+    const racerObject = {
       grupe: raceGroupInputValue,
       startoNr: +e.target.startoNr.value,
       vardas: [e.target.vardas.value, e.target.pavarde.value],
-    });
+    };
+
+    //If there is added "RACE_DISTANCE" in config file then add dist object
+    if (config.RACE_DISTANCE.length > 0) {
+      racerObject["dist"] = +raceDistanceInputValue;
+    }
+
+    //If there is added "BICYCLE" in config file then add dist object
+    if (config.BICYCLE.length > 0) {
+      racerObject["dviratis"] = bicycleInputValue;
+    }
+
+    setRacer(racerObject);
 
     setUserInput();
     setSurnameInput();
