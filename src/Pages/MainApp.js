@@ -17,6 +17,8 @@ import ChangesToRacer from "../Components/ChangesToRacer/ChangesToRacer";
 import LogOutBtn from "../Components/LogOutBtn";
 import LogoutReminder from "../Components/LogoutReminder/LogoutReminder";
 
+import config from "../config.json";
+
 function MainApp() {
   const dispatch = useDispatch();
 
@@ -89,11 +91,13 @@ function MainApp() {
           setValue(newValue);
         }}
       >
-        <BottomNavigationAction
-          label="Starto Laikas"
-          icon={<DirectionsBikeIcon />}
-          onClick={showStartTimeHandler}
-        />
+        {config.RACE_START.length == 0 && (
+          <BottomNavigationAction
+            label="Starto Laikas"
+            icon={<DirectionsBikeIcon />}
+            onClick={showStartTimeHandler}
+          />
+        )}
         <BottomNavigationAction
           label="Finišo laiką"
           icon={<SportsScoreIcon />}
