@@ -27,6 +27,8 @@ const AddRacer = () => {
   const [bicycleInputValue, setBicycleInputValue] = useState("");
   const [raceGroupInputValue, setRaceGroupInputValue] = useState("");
 
+  const [sameRaceStart, setSameRaceStart] = useState();
+
   // Validating name input
   const {
     value: nameValue,
@@ -78,6 +80,13 @@ const AddRacer = () => {
 
   const distanceChangeHandler = (event) => {
     setRaceDistanceInputValue(event.target.value);
+    if (event.target.value !== undefined && config.RACE_START.length !== 0) {
+      const indexOfDistance = config.RACE_DISTANCE.indexOf(event.target.value);
+      const raceStartTimeInMSByIndex = new Date(
+        config.RACE_START[indexOfDistance]
+      ).getTime();
+      setSameRaceStart(raceStartTimeInMSByIndex);
+    }
   };
 
   const formSubmitHanlder = (e) => {
@@ -97,6 +106,11 @@ const AddRacer = () => {
     //If there is added "BICYCLE" in config file then add dviratis object
     if (config.BICYCLE.length > 0) {
       racerObject["dviratis"] = bicycleInputValue;
+    }
+
+    // if there is same race start time for distance adding race start item in racer object
+    if (sameRaceStart !== undefined) {
+      racerObject["startoLaikas"] = sameRaceStart;
     }
 
     setRacer(racerObject);
