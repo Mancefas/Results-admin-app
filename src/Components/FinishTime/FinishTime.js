@@ -103,7 +103,7 @@ const FinishTime = () => {
         {
           method: "PATCH",
           body: JSON.stringify({
-            finisoLaikas: `${finishTime}`,
+            finisoLaikas: +`${finishTime}`,
             vaziavimoLaikas: `${raceTime}`,
             vaziavimoLaikasMS: `${raceTimeInMS}`,
           }),
@@ -161,7 +161,7 @@ const FinishTime = () => {
     );
 
     const finishTime = {
-      dalyvis: racerNR,
+      dalyvis: +racerNR,
       finisoLaikas: `${raceFinish}`,
       vaziavimoLaikas: `${racingTimeInHMinSec}`,
       vaziavimoLaikasMS: `${racingTimeInMilliseconds}`,
